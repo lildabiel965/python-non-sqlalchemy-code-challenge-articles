@@ -9,16 +9,17 @@ class Author:
         self.name = name
 
     def articles(self):
-        pass
+        return [article for article in Article._all if article.author == self]
 
     def magazines(self):
-        pass
+        return list(set(article.magazine for article in self.articles()))
 
     def add_article(self, magazine, title):
-        pass
+        return Article(self, magazine, title)
 
     def topic_areas(self):
-        pass
+        categories = list(set(magazine.category for magazine in self.magazines()))
+        return categories if categories else None
 
 class Magazine:
     def __init__(self, name, category):
@@ -26,13 +27,18 @@ class Magazine:
         self.category = category
 
     def articles(self):
-        pass
+        return [article for article in Article._all if article.magazine == self]
 
     def contributors(self):
-        pass
+        return list(set(article.author for article in self.articles()))
 
     def article_titles(self):
-        pass
+        titles = [article.title for article in self.articles()]
+        return titles if titles else None
 
     def contributing_authors(self):
-        pass
+        author_count = {}
+        for article in self.articles():
+            author_count[article.author] = author_count.get(article.author, 0) + 1
+        top_authors = [author for author, count in author_count.items() if count > 2]
+        return top_authors if top_authors else None
