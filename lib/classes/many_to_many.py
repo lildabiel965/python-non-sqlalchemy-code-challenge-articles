@@ -41,7 +41,7 @@ class Author:
 
     def magazines(self):
         magazines = list(set(article.magazine for article in self.articles()))
-        return magazines if magazines else None
+        return magazines if magazines else []  # Change from None to an empty list
 
     def add_article(self, magazine, title):
         if not isinstance(magazine, Magazine):
@@ -52,7 +52,7 @@ class Author:
 
     def topic_areas(self):
         categories = list(set(magazine.category for magazine in self.magazines()))
-        return categories if categories else None
+        return categories if categories else []  # Change from None to an empty list
 
 
 class Magazine:
