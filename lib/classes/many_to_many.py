@@ -1,12 +1,32 @@
 class Article:
+    _all = []  # Class variable to hold all instances of Article
+
     def __init__(self, author, magazine, title):
         self.author = author
         self.magazine = magazine
-        self.title = title
+        self._title = title  # Change title to a private attribute
+        Article._all.append(self)  # Add the instance to the class variable
+
+    @property
+    def title(self):
+        return self._title  # Add property for title to enforce immutability
+
+    @title.setter
+    def title(self, value):
+        raise AttributeError("title is immutable")  # Add setter to enforce immutability
+
         
 class Author:
     def __init__(self, name):
-        self.name = name
+        self._name = name
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        raise AttributeError("name is immutable")
 
     def articles(self):
         return [article for article in Article._all if article.author == self]
@@ -23,8 +43,26 @@ class Author:
 
 class Magazine:
     def __init__(self, name, category):
-        self.name = name
-        self.category = category
+        self._name = name
+        self._category = category
+
+    @property
+    def name(self):
+        return self._name  # Add property for name to allow access
+
+    @name.setter
+    def name(self, value):
+        raise AttributeError("name is immutable")  # Add setter to enforce immutability
+
+    @property
+    def category(self):
+        return self._category
+
+    @category.setter
+    def category(self, value):
+        if not value:
+            raise ValueError("Category must be a non-empty string")
+        self._category = value
 
     def articles(self):
         return [article for article in Article._all if article.magazine == self]
