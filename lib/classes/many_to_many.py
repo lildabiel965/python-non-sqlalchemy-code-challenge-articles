@@ -2,9 +2,15 @@ class Article:
     _all = []  # Class variable to hold all instances of Article
 
     def __init__(self, author, magazine, title):
+        if not isinstance(author, Author):
+            raise ValueError("Author must be an instance of Author.")
+        if not isinstance(magazine, Magazine):
+            raise ValueError("Magazine must be an instance of Magazine.")
+        if not isinstance(title, str) or not (5 <= len(title) <= 50):
+            raise ValueError("Title must be a string between 5 and 50 characters.")
         self.author = author
         self.magazine = magazine
-        self._title = title  # Change title to a private attribute
+        self._title = title
         Article._all.append(self)  # Add the instance to the class variable
 
     @property
@@ -15,9 +21,11 @@ class Article:
     def title(self, value):
         raise AttributeError("title is immutable")  # Add setter to enforce immutability
 
-        
+
 class Author:
     def __init__(self, name):
+        if not isinstance(name, str) or len(name) <= 0:
+            raise ValueError("Name must be a non-empty string.")
         self._name = name
 
     @property
@@ -32,18 +40,28 @@ class Author:
         return [article for article in Article._all if article.author == self]
 
     def magazines(self):
-        return list(set(article.magazine for article in self.articles()))
+        magazines = list(set(article.magazine for article in self.articles()))
+        return magazines if magazines else None
 
     def add_article(self, magazine, title):
+        if not isinstance(magazine, Magazine):
+            raise ValueError("The magazine must be an instance of Magazine.")
+        if not isinstance(title, str) or not (5 <= len(title) <= 50):
+            raise ValueError("Title must be a string between 5 and 50 characters.")
         return Article(self, magazine, title)
 
     def topic_areas(self):
         categories = list(set(magazine.category for magazine in self.magazines()))
         return categories if categories else None
 
+
 class Magazine:
     def __init__(self, name, category):
+        if not isinstance(name, str) or not (2 <= len(name) <= 16):
+            raise ValueError("Name must be a string between 2 and 16 characters.")
         self._name = name
+        if not isinstance(category, str) or len(category) <= 0:
+            raise ValueError("Category must be a non-empty string.")
         self._category = category
 
     @property
@@ -68,7 +86,8 @@ class Magazine:
         return [article for article in Article._all if article.magazine == self]
 
     def contributors(self):
-        return list(set(article.author for article in self.articles()))
+        authors = list(set(article.author for article in self.articles()))
+        return authors if authors else None
 
     def article_titles(self):
         titles = [article.title for article in self.articles()]
